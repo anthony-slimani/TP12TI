@@ -8,7 +8,11 @@ import java.awt.Rectangle;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
+import ij.gui.Roi;
 import ij.plugin.filter.PlugInFilter;
+import ij.plugin.frame.RoiManager;
+import ij.process.Blitter;
+import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
@@ -18,9 +22,20 @@ import ij.process.ImageProcessor;
  *
  */
 public class Plugin12_ implements PlugInFilter{
+	public final static int[][] QY = {
+		    {16, 12, 14, 14,  18,  24,  49,  72},
+		    {11, 12, 13, 17,  22,  35,  64,  92},
+		    {10, 14, 16, 22,  37,  55,  78,  95},
+		    {16, 19, 24, 29,  56,  64,  87,  98},
+		    {24, 26, 40, 51,  68,  81, 103, 112},
+		    {40, 58, 57, 87, 109, 104, 121, 100},
+		    {51, 60, 69, 80, 103, 113, 120, 103},
+		    {61, 55, 56, 62,  77,  92, 101,  99}
+		};
 	ImagePlus imp;	
 	int width;
 	int height;
+	private static ByteProcessor bpQuantification = new ByteProcessor(8, 8);
 	
 	@Override
 	public void run(ImageProcessor arg0) {
@@ -31,11 +46,16 @@ public class Plugin12_ implements PlugInFilter{
 		imc.convertToGray32();
 		FloatProcessor fp = (FloatProcessor) imp.getProcessor();
 		fp.subtract(128.0);
-		Rectangle roi = new Rectangle(64, 64, 8, 8);
-		DCT2D.forwardDCT(roi,fp);
+		DCT2D.forwardDCT(fp);
 		imp.setProcessor(fp);
 		imp.updateAndDraw();
+		imp.setProcessor(fp);
+		imp.updateAndDraw();
+		bpQuantification.setIntArray(QY);
+		fp.copyBits(bpQuantification, 0, 0, Blitter.DIVIDE);
 		
+		imp.setProcessor(fp);
+		imp.updateAndDraw();
 		
 	}
 
