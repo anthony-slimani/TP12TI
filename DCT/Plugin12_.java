@@ -3,6 +3,8 @@
  */
 package DCT;
 
+import java.awt.Rectangle;
+
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
@@ -29,7 +31,8 @@ public class Plugin12_ implements PlugInFilter{
 		imc.convertToGray32();
 		FloatProcessor fp = (FloatProcessor) imp.getProcessor();
 		fp.subtract(128.0);
-		DCT2D.forwardDCT(fp);
+		Rectangle roi = new Rectangle(64, 64, 8, 8);
+		DCT2D.forwardDCT(roi,fp);
 		imp.setProcessor(fp);
 		imp.updateAndDraw();
 		
