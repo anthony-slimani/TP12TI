@@ -8,6 +8,7 @@ import ij.ImageJ;
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.FloatProcessor;
+import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 
 /**
@@ -24,11 +25,15 @@ public class Plugin12_ implements PlugInFilter{
 		// TODO Auto-generated method stub
 	    width = imp.getWidth();
 	    height = imp.getHeight();
-		FloatProcessor fp = new FloatProcessor(width, height);
+	    ImageConverter imc = new ImageConverter(imp);
+		imc.convertToGray32();
+		FloatProcessor fp = (FloatProcessor) imp.getProcessor();
 		fp.subtract(128.0);
 		DCT2D.forwardDCT(fp);
-		//dupliquer l'image
-		System.out.println("traitement effectue");
+		imp.setProcessor(fp);
+		imp.updateAndDraw();
+		
+		
 	}
 
 	@Override
@@ -51,10 +56,7 @@ public class Plugin12_ implements PlugInFilter{
 		// open the Clown sample
 		
 		ImagePlus image = IJ.openImage("./wikipedia_extract.png");
-		//ImageConverter imc = new ImageConverter(image);
-		//imc.convertToGray8();
-		//image.updateAndDraw();
-		image.show();
+		
 
 		// run the plugin
 		IJ.runPlugIn(clazz.getName(), "");
